@@ -117,9 +117,26 @@ class WaveletLatentOperator(nn.Module):
             raise FileNotFoundError(f"Missing submission weights: {weights_path}")
 
         state = torch.load(weights_path, map_location="cpu")
-        if isinstance(state, dict) and "state_dict" in state:
-            state = state["state_dict"]
-        self.load_state_dict(state, strict=False)
+
+        if isinstance(state, dict):
+            if "model_state_dict" in state:
+                state = state["model_state_dict"]
+            elif "state_dict" in state:
+                state = state["state_dict"]
+
+        missing, unexpected = self.load_state_dict(state, strict=False)
+
+        allowed_missing_prefixes = (
+            "integral_scattering.integral_scattering.tensor",
+            "integral_scattering.integral_scattering.tensor_gaussian_filter",
+            "local_scattering.integral_scattering.tensor",
+            "local_scattering.integral_scattering.tensor_gaussian_filter",
+        )
+
+        bad_missing = [key for key in missing if not key.startswith(allowed_missing_prefixes)]
+
+        if bad_missing or unexpected:
+            raise RuntimeError(f"Checkpoint mismatch. Missing keys: {bad_missing}. Unexpected keys: {unexpected}")
 
     def _downsample_geometry_volume(self, geom_volume: torch.Tensor) -> torch.Tensor:
         geom_volume = geom_volume.unsqueeze(1)
