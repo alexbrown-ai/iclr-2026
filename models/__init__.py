@@ -1,5 +1,6 @@
 from .ensemble_spatiotemporal_models import EnsembleSpatioTemporalModels
 from .mlp import MLP
+from .smoothsplatnet import SmoothSplatNet
 from .transolver_corrector import TransolverCorrector
 from .aero_chrono_mixer import AeroChronoMixer
 from .levers_tail_submission import LeversTailV2Submission
