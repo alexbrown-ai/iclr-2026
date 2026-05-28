@@ -1,5 +1,6 @@
 from .ensemble_spatiotemporal_models import EnsembleSpatioTemporalModels
 from .mlp import MLP
+from .cdf_2grid import CDFDoubleGridNet
 from .finite_graph_v4 import FiniteGraphV4
 from .smoothsplatnet import SmoothSplatNet
 from .transolver_corrector import TransolverCorrector
